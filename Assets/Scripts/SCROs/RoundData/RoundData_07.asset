@@ -26,4 +26,4 @@ MonoBehaviour:
   - {fileID: 21300000, guid: 96b852166ae7efa4a8f59e606565eb44, type: 3}
   roundTimer: 70
   noDuplicatePairs: 0
-  fullStarScore: 250
+  fullStarScore: 245
