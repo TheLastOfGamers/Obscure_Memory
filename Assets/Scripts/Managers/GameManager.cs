@@ -41,6 +41,8 @@ public class GameManager : MonoBehaviour
     private TMP_Text timerText;
     private Coroutine timerCoroutine;
 
+    private TMP_Text scoreText;
+
     private void Awake()
     {
         if (Instance != null && Instance != this)
@@ -61,7 +63,7 @@ public class GameManager : MonoBehaviour
             resultPanel = FindObjectOfType<ResultPanel>();
             comboText = GameObject.Find("Combo_Text")?.GetComponent<TMP_Text>();
             timerText = GameObject.Find("Timer_Text")?.GetComponent<TMP_Text>();
-
+            scoreText = GameObject.Find("Score_Text")?.GetComponent<TMP_Text>();
             if (gridManager != null)
                 gridManager.OnAllCardsMatched += HandleRoundComplete;
 
@@ -183,8 +185,10 @@ public class GameManager : MonoBehaviour
             card1.StartCoroutine(card1.FlipCard());
             card2.StartCoroutine(card2.FlipCard());
             score -= Mathf.RoundToInt(LevelManager.Instance.ScoreModifier() * 2);
+            if (score < 0) score = 0;
         }
         UpdateCombo(comboCount, comboMultiplier);
+        UpdateScoreUI();
         print($"Score: {score} | Combo: {comboCount} | Multiplier: {comboMultiplier}");
     }
 
@@ -233,13 +237,14 @@ public class GameManager : MonoBehaviour
         }
         timerRemaining = 0;
         UpdateTimerUI();
+        UpdateScoreUI();
     }
     public void UpdateCombo(int comboCount, float comboMultiplier)
     {
         if (comboText != null)
         {
             if (comboCount > 1)
-                comboText.text = $"Combo: x{comboCount} ({comboMultiplier:0.0}x)";
+                comboText.text = $"Combo: x{comboCount}";
             else
                 comboText.text = "";
         }
@@ -278,6 +283,12 @@ public class GameManager : MonoBehaviour
     {
         if (timerText != null)
             timerText.text = $"Time: {Mathf.CeilToInt(timerRemaining)}";
+    }
+
+    private void UpdateScoreUI()
+    {
+        if (scoreText != null)
+            scoreText.text = $"Score: {score}";
     }
 
     private void HandleTimerEnd()
