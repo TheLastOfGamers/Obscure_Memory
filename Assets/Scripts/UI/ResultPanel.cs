@@ -1,6 +1,7 @@
 using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
+using System.Collections;
 
 public class ResultPanel : MonoBehaviour
 {
@@ -9,9 +10,26 @@ public class ResultPanel : MonoBehaviour
     [SerializeField] private Button menuButton;
     [SerializeField] private TMP_Text scoreText;
     [SerializeField] private Transform starsContainer; // Parent of star GameObjects
+    [SerializeField] private Animator animator; // Assign in inspector
+
+    private const string OPEN_ANIM = "ResultPanel_BG_Anim_Open";
+    private const string CLOSE_ANIM = "ResultPanel_BG_Anim_Close";
 
     public void Show(int score, bool won, bool hasNextRound)
     {
+        gameObject.SetActive(true);
+        StartCoroutine(PlayOpenAnimation(score, won, hasNextRound));
+    }
+
+    private IEnumerator PlayOpenAnimation(int score, bool won, bool hasNextRound)
+    {
+        if (animator != null)
+        {
+            animator.Play(OPEN_ANIM);
+            yield return new WaitForSeconds(animator.GetCurrentAnimatorStateInfo(0).length);
+        }
+
+        // Now activate the child after animation
         gameObject.transform.GetChild(0).gameObject.SetActive(true);
         scoreText.text = $"Score: {score}";
 
@@ -28,6 +46,15 @@ public class ResultPanel : MonoBehaviour
         menuButton.onClick.AddListener(OnMenuClicked);
 
         UpdateStars(score);
+    }
+
+    public void Hide()
+    {
+        gameObject.transform.GetChild(0).gameObject.SetActive(false);
+        if (animator != null)
+        {
+            animator.Play(CLOSE_ANIM);
+        }
     }
 
     private void UpdateStars(int score)
@@ -52,11 +79,6 @@ public class ResultPanel : MonoBehaviour
                 img.color = (i < stars) ? Color.white : Color.black;
             }
         }
-    }
-
-    public void Hide()
-    {
-        gameObject.SetActive(false);
     }
 
     private void OnNextRoundClicked()
