@@ -51,6 +51,8 @@ public class ResultPanel : MonoBehaviour
 
     public void Hide()
     {
+        SoundManager.Instance.PlaySFX("ButtonClick");
+        GameManager.Instance.ResetCards();
         gameObject.transform.GetChild(0).gameObject.SetActive(false);
         if (animator != null)
         {
@@ -87,21 +89,18 @@ public class ResultPanel : MonoBehaviour
     private void OnNextRoundClicked()
     {
         Hide();
-        GameManager.Instance.ResetCards();
         LevelManager.Instance.CompleteRound();
     }
 
     private void OnRetryClicked()
     {
         Hide();
-        GameManager.Instance.ResetCards();
         LevelManager.Instance.LoadRound(); // Just reload the current round
     }
 
     private void OnMenuClicked()
     {
         Hide();
-        GameManager.Instance.ResetCards();
         SceneManager.LoadScene("MainScene");
         SoundManager.Instance.PlayMusic("FLIPPER_BGM");
         // Implement menu navigation logic here

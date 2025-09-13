@@ -43,10 +43,10 @@ public class LevelManager : MonoBehaviour
         switch (currentDifficulty)
         {
             case Difficulty.Easy:
-                roundTimer *= 1.1f; // +10% time
+                roundTimer *= 1.2f; // +20% time
                 break;
             case Difficulty.Hard:
-                roundTimer *= 0.9f; // -10% time
+                roundTimer *= 0.8f; // -20% time
                 break;
         }
 

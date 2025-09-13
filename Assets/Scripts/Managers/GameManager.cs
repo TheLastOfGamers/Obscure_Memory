@@ -7,7 +7,7 @@ using UnityEngine.SceneManagement;
 public enum Difficulty
 {
     Easy,
-    Medium,
+    Normal,
     Hard
 }
 
@@ -22,8 +22,6 @@ public class GameManager : MonoBehaviour
     public Difficulty SelectedDifficulty { get; private set; }
 
     private Queue<CardController> flippedCards = new Queue<CardController>();
-
-    private const string PLAYER_PREF_KEY = "LevelPlayed_"; // + level index
 
     private GridManager gridManager;
     private ResultPanel resultPanel;
@@ -44,6 +42,7 @@ public class GameManager : MonoBehaviour
     private TMP_Text scoreText;
     private TMP_Text bestScoreText;
     private TMP_Text bestTimeText;
+    private TMP_Text curRoundText;
 
     private int bestScore = 0;
     private float bestTime = 0f;
@@ -71,6 +70,7 @@ public class GameManager : MonoBehaviour
             scoreText = GameObject.Find("Score_Text")?.GetComponent<TMP_Text>();
             bestScoreText = GameObject.Find("BestScore_Text")?.GetComponent<TMP_Text>();
             bestTimeText = GameObject.Find("BestTimer_Text")?.GetComponent<TMP_Text>();
+            curRoundText = GameObject.Find("Round_Text")?.GetComponent<TMP_Text>();
             if (gridManager != null)
                 gridManager.OnAllCardsMatched += HandleRoundComplete;
 
@@ -266,9 +266,14 @@ public class GameManager : MonoBehaviour
         if (timerCoroutine != null)
             StopCoroutine(timerCoroutine);
         timerCoroutine = StartCoroutine(TimerRoutine());
+        int curRoundIndex = LevelManager.Instance.CurrentRoundIndex;
+        bestScore = PlayerManager.Instance.LoadBestScore(currentLevelIndex, curRoundIndex);
+        bestTime = PlayerManager.Instance.LoadBestTime(currentLevelIndex, curRoundIndex);
 
-        bestScore = PlayerManager.Instance.LoadBestScore(currentLevelIndex, LevelManager.Instance.CurrentRoundIndex);
-        bestTime = PlayerManager.Instance.LoadBestTime(currentLevelIndex, LevelManager.Instance.CurrentRoundIndex);
+        if (curRoundText != null && (curRoundIndex + 1 > 0))
+            curRoundText.text = $"Round: {curRoundIndex + 1}";
+        else
+            curRoundText.text = "";
 
         if (bestScoreText != null && bestScore > 0)
             bestScoreText.text = $"Best Score: {bestScore}";

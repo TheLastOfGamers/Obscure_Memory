@@ -2,6 +2,7 @@ using UnityEngine;
 using UnityEngine.UI;
 using TMPro;
 using UnityEngine.SceneManagement;
+using Unity.VisualScripting;
 
 public class LevelSelectionPanel : MonoBehaviour
 {
@@ -15,9 +16,14 @@ public class LevelSelectionPanel : MonoBehaviour
     [SerializeField] private Transform difficultyContainer;
     [SerializeField] private GameObject difficultyBtnPrefab;
     [SerializeField] private Sprite questionMarkIcon;
+    [SerializeField] private GameObject diffInfoPanel;
+    [SerializeField] private TMP_Text diffInfoTitleText;
+    [SerializeField] private TMP_Text diffInfoDescText;
+    [SerializeField] private Button playBtn;
 
     private LevelData[] levels;
     private int currentIndex = 0;
+    private Difficulty selectedDifficulty;
 
     private void Start()
     {
@@ -96,7 +102,35 @@ public class LevelSelectionPanel : MonoBehaviour
             if (btnText != null)
                 btnText.text = diff.ToString();
 
-            btnObj.GetComponent<Button>().onClick.AddListener(() => OnDifficultySelected(diff));
+            btnObj.GetComponent<Button>().onClick.AddListener(() =>
+            {
+                selectedDifficulty = diff;
+                ShowDiffInfo(selectedDifficulty);
+            });
+        }
+    }
+
+    private void ShowDiffInfo(Difficulty diff)
+    {
+        diffInfoPanel.SetActive(true);
+        diffInfoTitleText.text = diff.ToString();
+        diffInfoDescText.text = GetDifficultyDescription(diff);
+        playBtn.onClick.RemoveAllListeners();
+        playBtn.onClick.AddListener(() => OnDifficultySelected(diff));
+    }
+
+    public string GetDifficultyDescription(Difficulty difficulty)
+    {
+        switch (difficulty)
+        {
+            case Difficulty.Easy:
+                return "Easy:\n-10% score modifier\n+20% round time\nCombo: Untimed (combo only breaks on invalid match).";
+            case Difficulty.Normal:
+                return "Normal:\nNo score modifier\nStandard round time\nCombo: Untimed (combo only breaks on invalid match).";
+            case Difficulty.Hard:
+                return "Hard:\n+10% score modifier\n-20% round time\nCombo: Timed (combo breaks on invalid match or after a short time).";
+            default:
+                return "Unknown difficulty.";
         }
     }
 
