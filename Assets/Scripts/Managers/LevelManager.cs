@@ -26,12 +26,9 @@ public class LevelManager : MonoBehaviour
     {
         currentLevel = level;
         currentDifficulty = difficulty;
-        currentRoundIndex = 0;
-
-        LoadRound();
     }
 
-    private void LoadRound()
+    public void LoadRound()
     {
         if (currentRoundIndex >= currentLevel.rounds.Length)
         {
@@ -89,5 +86,10 @@ public class LevelManager : MonoBehaviour
     public float GetRoundTimer()
     {
         return roundTimer;
+    }
+    public void SetCurrentRound(int roundIndex)
+    {
+        currentRoundIndex = Mathf.Clamp(roundIndex, 0, currentLevel.rounds.Length - 1);
+        LoadRound();
     }
 }

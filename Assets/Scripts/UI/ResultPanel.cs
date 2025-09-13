@@ -95,12 +95,13 @@ public class ResultPanel : MonoBehaviour
     {
         Hide();
         GameManager.Instance.ResetCards();
-        LevelManager.Instance.StartLevel(GameManager.Instance.SelectedLevel, GameManager.Instance.SelectedDifficulty);
+        LevelManager.Instance.LoadRound(); // Just reload the current round
     }
 
     private void OnMenuClicked()
     {
         Hide();
+        GameManager.Instance.ResetCards();
         SceneManager.LoadScene("MainScene");
         SoundManager.Instance.PlayMusic("FLIPPER_BGM");
         // Implement menu navigation logic here

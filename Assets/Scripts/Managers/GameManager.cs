@@ -42,7 +42,12 @@ public class GameManager : MonoBehaviour
     private Coroutine timerCoroutine;
 
     private TMP_Text scoreText;
+    private TMP_Text bestScoreText;
+    private TMP_Text bestTimeText;
 
+    private int bestScore = 0;
+    private float bestTime = 0f;
+    private int currentLevelIndex = 0; // Current level index
     private void Awake()
     {
         if (Instance != null && Instance != this)
@@ -64,30 +69,20 @@ public class GameManager : MonoBehaviour
             comboText = GameObject.Find("Combo_Text")?.GetComponent<TMP_Text>();
             timerText = GameObject.Find("Timer_Text")?.GetComponent<TMP_Text>();
             scoreText = GameObject.Find("Score_Text")?.GetComponent<TMP_Text>();
+            bestScoreText = GameObject.Find("BestScore_Text")?.GetComponent<TMP_Text>();
+            bestTimeText = GameObject.Find("BestTimer_Text")?.GetComponent<TMP_Text>();
             if (gridManager != null)
                 gridManager.OnAllCardsMatched += HandleRoundComplete;
 
-                
+            // Load player's progress for this level
+            int roundIndex = PlayerManager.Instance.LoadProgress(currentLevelIndex);
+
+            // First, start the level (sets currentLevel)
             LevelManager.Instance.StartLevel(SelectedLevel, SelectedDifficulty);
+
+            // Now, set the current round
+            LevelManager.Instance.SetCurrentRound(roundIndex);
         }
-    }
-
-    // public void Start()
-    // {
-    //     SelectLevel(0);
-    //     SelectDifficulty(Difficulty.Medium);
-    // }
-
-    // Called when player selects a level
-    public bool HasPlayerPlayedLevel(int levelIndex)
-    {
-        return PlayerPrefs.GetInt(PLAYER_PREF_KEY + levelIndex, 0) == 1;
-    }
-
-    public void MarkLevelAsPlayed(int levelIndex)
-    {
-        PlayerPrefs.SetInt(PLAYER_PREF_KEY + levelIndex, 1);
-        PlayerPrefs.Save();
     }
 
     public void SelectLevel(int levelIndex)
@@ -99,6 +94,7 @@ public class GameManager : MonoBehaviour
         }
 
         SelectedLevel = allLevels[levelIndex];
+        currentLevelIndex = levelIndex;
     }
 
     public void SelectDifficulty(Difficulty difficulty)
@@ -213,6 +209,15 @@ public class GameManager : MonoBehaviour
         if (timerCoroutine != null)
             StopCoroutine(timerCoroutine);
 
+        // Save progress: move to next round
+        int levelIndex = System.Array.IndexOf(allLevels, SelectedLevel);
+        int nextRoundIndex = LevelManager.Instance.CurrentRoundIndex + 1;
+        PlayerManager.Instance.SaveProgress(levelIndex, nextRoundIndex);
+
+        // Save best score and time for this round
+        PlayerManager.Instance.SaveBestScore(levelIndex, LevelManager.Instance.CurrentRoundIndex, score);
+        PlayerManager.Instance.SaveBestTime(levelIndex, LevelManager.Instance.CurrentRoundIndex, timerRemaining);
+
         if (resultPanel != null)
             resultPanel.Show(score, true, LevelManager.Instance.HasNextRound());
         else
@@ -236,6 +241,8 @@ public class GameManager : MonoBehaviour
             timerCoroutine = null;
         }
         timerRemaining = 0;
+        bestScoreText.text = "";
+        bestTimeText.text = "";
         UpdateTimerUI();
         UpdateScoreUI();
     }
@@ -259,6 +266,18 @@ public class GameManager : MonoBehaviour
         if (timerCoroutine != null)
             StopCoroutine(timerCoroutine);
         timerCoroutine = StartCoroutine(TimerRoutine());
+
+        bestScore = PlayerManager.Instance.LoadBestScore(currentLevelIndex, LevelManager.Instance.CurrentRoundIndex);
+        bestTime = PlayerManager.Instance.LoadBestTime(currentLevelIndex, LevelManager.Instance.CurrentRoundIndex);
+
+        if (bestScoreText != null && bestScore > 0)
+            bestScoreText.text = $"Best Score: {bestScore}";
+        else
+            bestScoreText.text = "";
+        if (bestTimeText != null && bestTime < float.MaxValue)
+            bestTimeText.text = $"Best Time: {bestTime:F2}s";
+        else
+            bestTimeText.text = "";
     }
     private IEnumerator TimerRoutine()
     {
@@ -289,6 +308,8 @@ public class GameManager : MonoBehaviour
     {
         if (scoreText != null)
             scoreText.text = $"Score: {score}";
+        if (score > bestScore)
+            bestScoreText.text = $"Best Score: {score}";
     }
 
     private void HandleTimerEnd()
