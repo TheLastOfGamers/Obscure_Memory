@@ -12,6 +12,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 5db92c459ced3f448b24cefcc90a74b3, type: 3}
   m_Name: LevelData_01
   m_EditorClassIdentifier: 
+  levelName: Veggie Flip'O
+  levelThumbnail: {fileID: 21300000, guid: cac11710f383be9418e9529177be6f42, type: 3}
   rounds:
   - {fileID: 11400000, guid: a1e44ff8b02062f409f9c30735309950, type: 2}
   - {fileID: 11400000, guid: b9dd9293809924743adf1c966ef55164, type: 2}

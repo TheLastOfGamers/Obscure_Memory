@@ -64,14 +64,17 @@ public class GameManager : MonoBehaviour
 
             if (gridManager != null)
                 gridManager.OnAllCardsMatched += HandleRoundComplete;
+
+                
+            LevelManager.Instance.StartLevel(SelectedLevel, SelectedDifficulty);
         }
     }
 
-    public void Start()
-    {
-        SelectLevel(0);
-        SelectDifficulty(Difficulty.Medium);
-    }
+    // public void Start()
+    // {
+    //     SelectLevel(0);
+    //     SelectDifficulty(Difficulty.Medium);
+    // }
 
     // Called when player selects a level
     public bool HasPlayerPlayedLevel(int levelIndex)
@@ -100,8 +103,7 @@ public class GameManager : MonoBehaviour
     {
         SelectedDifficulty = difficulty;
 
-        // Pass info to LevelManager
-        LevelManager.Instance.StartLevel(SelectedLevel, SelectedDifficulty);
+        SceneManager.LoadScene("GameScene");
     }
 
     public void RegisterCard(CardController card)
@@ -202,7 +204,7 @@ public class GameManager : MonoBehaviour
     private void HandleRoundComplete()
     {
         if (timerCoroutine != null)
-                StopCoroutine(timerCoroutine);
+            StopCoroutine(timerCoroutine);
 
         if (resultPanel != null)
             resultPanel.Show(score, true, LevelManager.Instance.HasNextRound());
@@ -274,5 +276,9 @@ public class GameManager : MonoBehaviour
         // Show result panel with failure
         resultPanel.Show(score, false, LevelManager.Instance.HasNextRound());
         timerText.gameObject.SetActive(false);
+    }
+    public LevelData[] GetAllLevels()
+    {
+        return allLevels;
     }
 }
