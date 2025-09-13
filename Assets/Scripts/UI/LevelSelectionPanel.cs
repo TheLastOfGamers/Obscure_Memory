@@ -24,6 +24,11 @@ public class LevelSelectionPanel : MonoBehaviour
     [SerializeField] private GameObject levelSelectionPanel;
     [SerializeField] private GameObject mainMenuPanel;
 
+    //Setting References
+    [Header("UI Settings References")]
+    [SerializeField] private Button resetBtn;
+    [SerializeField] private Button MuteBtn;
+    [SerializeField] private Button[] HUDBtns;
     private LevelData[] levels;
     private int currentIndex = 0;
     private Difficulty selectedDifficulty;
@@ -36,6 +41,7 @@ public class LevelSelectionPanel : MonoBehaviour
         nextBtn.onClick.AddListener(OnNextClicked);
         prevBtn.onClick.AddListener(OnPrevClicked);
         selectBtn.onClick.AddListener(OnSelectLevelClicked);
+        AssignHUDButtonSFX();
     }
 
     private void ShowLevel(int index)
@@ -90,7 +96,7 @@ public class LevelSelectionPanel : MonoBehaviour
         nextBtn.gameObject.SetActive(false);
         prevBtn.gameObject.SetActive(false);
         selectBtn.gameObject.SetActive(false);
-        
+
         backBtn.gameObject.SetActive(true);
         difficultyContainer.gameObject.SetActive(true);
         Debug.Log("Showing difficulty selection");
@@ -110,6 +116,7 @@ public class LevelSelectionPanel : MonoBehaviour
             {
                 selectedDifficulty = diff;
                 ShowDiffInfo(selectedDifficulty);
+                SoundManager.Instance.PlaySFX("ButtonClick");
             });
         }
     }
@@ -166,5 +173,40 @@ public class LevelSelectionPanel : MonoBehaviour
             mainMenuPanel.SetActive(true);
             levelSelectionPanel.SetActive(false);
         }
+    }
+
+    public void OnResetProgressClicked()
+    {
+        SoundManager.Instance.PlaySFX("ButtonClick");
+        PlayerManager.Instance.ResetAllData();
+        Debug.Log("All progress has been reset.");
+    }
+
+    public void OnMuteButtonClicked()
+    {
+        SoundManager.Instance.ToggleMute();
+        bool isMuted = SoundManager.Instance.IsMuted();
+        var muteIcon = MuteBtn.transform.Find("Mute")?.gameObject;
+        var unmuteIcon = MuteBtn.transform.Find("Unmute")?.gameObject;
+        if (muteIcon != null) muteIcon.SetActive(!isMuted);
+        if (unmuteIcon != null) unmuteIcon.SetActive(isMuted);
+        SoundManager.Instance.PlaySFX("ButtonClick");
+    }
+    
+    private void AssignHUDButtonSFX()
+    {
+        foreach (var btn in HUDBtns)
+        {
+            if (btn != null)
+            {
+                btn.onClick.RemoveListener(PlayHUDButtonSFX);
+                btn.onClick.AddListener(PlayHUDButtonSFX);
+            }
+        }
+    }
+
+    private void PlayHUDButtonSFX()
+    {
+        SoundManager.Instance.PlaySFX("ButtonClick");
     }
 }

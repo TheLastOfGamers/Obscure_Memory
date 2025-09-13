@@ -89,4 +89,15 @@ public class SoundManager : MonoBehaviour
         if (musicSource != null)
             musicSource.Stop();
     }
+
+    public void ToggleMute()
+    {
+        bool isMuted = AudioListener.volume == 0f;
+        AudioListener.volume = isMuted ? 1f : 0f;
+    }
+
+    public bool IsMuted()
+    {
+        return AudioListener.volume == 0f;
+    }
 }
