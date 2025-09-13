@@ -102,6 +102,7 @@ public class LevelSelectionPanel : MonoBehaviour
 
     private void OnDifficultySelected(Difficulty diff)
     {
+        SoundManager.Instance.PlaySFX("ButtonClick");
         GameManager.Instance.SelectDifficulty(diff);
     }
 }

@@ -2,7 +2,7 @@ using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
 using System.Collections;
-
+using UnityEngine.SceneManagement;
 public class ResultPanel : MonoBehaviour
 {
     [SerializeField] private Button nextRoundButton;
@@ -31,6 +31,7 @@ public class ResultPanel : MonoBehaviour
 
         // Now activate the child after animation
         gameObject.transform.GetChild(0).gameObject.SetActive(true);
+        SoundManager.Instance.PlaySFX("Result");
         scoreText.text = $"Score: {score}";
 
         nextRoundButton.gameObject.SetActive(won && hasNextRound);
@@ -69,6 +70,8 @@ public class ResultPanel : MonoBehaviour
             stars = 2;
         else if (score >= fullStarScore * 0.33f)
             stars = 1;
+        else if (score >= fullStarScore * 0.1f)
+        stars = 0;
 
         for (int i = 0; i < 3; i++)
         {
@@ -98,6 +101,8 @@ public class ResultPanel : MonoBehaviour
     private void OnMenuClicked()
     {
         Hide();
+        SceneManager.LoadScene("MainScene");
+        SoundManager.Instance.PlayMusic("FLIPPER_BGM");
         // Implement menu navigation logic here
     }
 }

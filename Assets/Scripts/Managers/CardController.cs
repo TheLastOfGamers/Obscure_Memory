@@ -45,6 +45,7 @@ public class CardController : MonoBehaviour
 
         StartCoroutine(BounceAndFlip());
         // Notify GameManager
+        SoundManager.Instance.PlaySFX("Flip");
         OnCardFlipped?.Invoke(this);
     }
 

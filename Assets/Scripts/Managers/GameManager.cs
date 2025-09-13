@@ -104,6 +104,8 @@ public class GameManager : MonoBehaviour
         SelectedDifficulty = difficulty;
 
         SceneManager.LoadScene("GameScene");
+
+        SoundManager.Instance.PlayMusic("FLIPPER_BGM_2");
     }
 
     public void RegisterCard(CardController card)
@@ -156,7 +158,7 @@ public class GameManager : MonoBehaviour
             score += Mathf.RoundToInt(LevelManager.Instance.ScoreModifier() * 10 * comboMultiplier);
 
             yield return new WaitForSeconds(0.5f);
-
+            SoundManager.Instance.PlaySFX("Match");
             gridManager.RemoveCard(card1);
             gridManager.RemoveCard(card2);
 
@@ -177,6 +179,7 @@ public class GameManager : MonoBehaviour
             }
 
             yield return new WaitForSeconds(0.7f);
+            SoundManager.Instance.PlaySFX("Invalid");
             card1.StartCoroutine(card1.FlipCard());
             card2.StartCoroutine(card2.FlipCard());
             score -= Mathf.RoundToInt(LevelManager.Instance.ScoreModifier() * 2);
@@ -254,9 +257,15 @@ public class GameManager : MonoBehaviour
     }
     private IEnumerator TimerRoutine()
     {
+        bool countdownSFXPlayed = false;
         while (timerRemaining > 0)
         {
             timerRemaining -= Time.deltaTime;
+            if (!countdownSFXPlayed && timerRemaining < 4)
+            {
+                SoundManager.Instance.PlaySFX("Countdown");
+                countdownSFXPlayed = true;
+            }
             UpdateTimerUI();
             yield return null;
         }

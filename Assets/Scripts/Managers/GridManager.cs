@@ -91,6 +91,7 @@ public class GridManager : MonoBehaviour
                 activeCards.Add(card);
             }
         }
+        SoundManager.Instance.PlaySFX("GameStart");
         StartCoroutine(InitiateCards());
     }
 
