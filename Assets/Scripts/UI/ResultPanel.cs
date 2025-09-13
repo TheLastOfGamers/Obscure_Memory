@@ -12,7 +12,7 @@ public class ResultPanel : MonoBehaviour
 
     public void Show(int score, bool won, bool hasNextRound)
     {
-        gameObject.SetActive(true);
+        gameObject.transform.GetChild(0).gameObject.SetActive(true);
         scoreText.text = $"Score: {score}";
 
         nextRoundButton.gameObject.SetActive(won && hasNextRound);

@@ -109,6 +109,8 @@ public class GridManager : MonoBehaviour
         {
             card.SetCardActive(true);
         }
+        
+        GameManager.Instance.StartRoundTimer();
     }
 
     private IEnumerator FlipAllCards()

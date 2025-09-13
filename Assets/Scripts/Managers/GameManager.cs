@@ -1,8 +1,8 @@
 using UnityEngine;
-using System;
+using TMPro;
 using System.Collections;
 using System.Collections.Generic;
-using Unity.Mathematics;
+using UnityEngine.SceneManagement;
 
 public enum Difficulty
 {
@@ -22,12 +22,24 @@ public class GameManager : MonoBehaviour
     public Difficulty SelectedDifficulty { get; private set; }
 
     private Queue<CardController> flippedCards = new Queue<CardController>();
-    private int score = 0;
 
     private const string PLAYER_PREF_KEY = "LevelPlayed_"; // + level index
 
-    [SerializeField] private GridManager gridManager;
-    [SerializeField] private ResultPanel resultPanel;
+    private GridManager gridManager;
+    private ResultPanel resultPanel;
+    //Combo
+    private TMP_Text comboText;
+    private int comboCount = 0;
+    private float comboMultiplier = 1f;
+    private Coroutine comboTimerCoroutine;
+    //Score
+    private int score = 0;
+
+    //Timer
+    private float roundTimer;
+    private float timerRemaining;
+    private TMP_Text timerText;
+    private Coroutine timerCoroutine;
 
     private void Awake()
     {
@@ -39,8 +51,20 @@ public class GameManager : MonoBehaviour
 
         Instance = this;
         DontDestroyOnLoad(gameObject);
+        SceneManager.sceneLoaded += OnSceneLoaded;
+    }
+    private void OnSceneLoaded(Scene scene, LoadSceneMode mode)
+    {
+        if (scene.name == "GameScene")
+        {
+            gridManager = FindObjectOfType<GridManager>();
+            resultPanel = FindObjectOfType<ResultPanel>();
+            comboText = GameObject.Find("Combo_Text")?.GetComponent<TMP_Text>();
+            timerText = GameObject.Find("Timer_Text")?.GetComponent<TMP_Text>();
 
-        gridManager.OnAllCardsMatched += HandleRoundComplete;
+            if (gridManager != null)
+                gridManager.OnAllCardsMatched += HandleRoundComplete;
+        }
     }
 
     public void Start()
@@ -108,11 +132,26 @@ public class GameManager : MonoBehaviour
 
     private IEnumerator CheckMatch(CardController card1, CardController card2)
     {
-        if (card1.GetFrontSprite() == card2.GetFrontSprite())
+        bool isMatch = card1.GetFrontSprite() == card2.GetFrontSprite();
+
+        if (isMatch)
         {
             card1.MarkMatched();
             card2.MarkMatched();
-            score += (int)LevelManager.Instance.ScoreModifier() * 10;
+
+            // Combo logic
+            comboCount++;
+            comboMultiplier = 1f + (comboCount - 1) * 0.2f; // Example: 1.0, 1.2, 1.4, ...
+
+            // Hard difficulty: reset combo timer
+            if (SelectedDifficulty == Difficulty.Hard)
+            {
+                if (comboTimerCoroutine != null)
+                    StopCoroutine(comboTimerCoroutine);
+                comboTimerCoroutine = StartCoroutine(ComboTimer());
+            }
+
+            score += Mathf.RoundToInt(LevelManager.Instance.ScoreModifier() * 10 * comboMultiplier);
 
             yield return new WaitForSeconds(0.5f);
 
@@ -124,21 +163,116 @@ public class GameManager : MonoBehaviour
         }
         else
         {
+            // Combo cancel logic
+            comboCount = 1;
+            comboMultiplier = 1f;
+
+            // Hard difficulty: stop combo timer
+            if (SelectedDifficulty == Difficulty.Hard && comboTimerCoroutine != null)
+            {
+                StopCoroutine(comboTimerCoroutine);
+                comboTimerCoroutine = null;
+            }
+
             yield return new WaitForSeconds(0.7f);
             card1.StartCoroutine(card1.FlipCard());
             card2.StartCoroutine(card2.FlipCard());
-            score -= (int)math.round(LevelManager.Instance.ScoreModifier() * 2) ;
+            score -= Mathf.RoundToInt(LevelManager.Instance.ScoreModifier() * 2);
         }
-        print("Score: " + score);
+        UpdateCombo(comboCount, comboMultiplier);
+        print($"Score: {score} | Combo: {comboCount} | Multiplier: {comboMultiplier}");
+    }
+
+    private IEnumerator ComboTimer()
+    {
+        float timer = 3f; // Combo expires after 3 seconds (adjust as needed)
+        while (timer > 0)
+        {
+            timer -= Time.deltaTime;
+            yield return null;
+        }
+        // Combo expired
+        comboCount = 1;
+        comboMultiplier = 1f;
+        comboTimerCoroutine = null;
+        UpdateCombo(comboCount, comboMultiplier);
+        print("Combo expired!");
     }
 
     private void HandleRoundComplete()
     {
-        resultPanel.Show(score, true, LevelManager.Instance.HasNextRound());
+        if (timerCoroutine != null)
+                StopCoroutine(timerCoroutine);
+
+        if (resultPanel != null)
+            resultPanel.Show(score, true, LevelManager.Instance.HasNextRound());
+        else
+            Debug.LogError("ResultPanel reference is missing in GameManager!");
     }
     public void ResetCards()
     {
         flippedCards.Clear();
         score = 0;
+        comboCount = 1;
+        comboMultiplier = 1f;
+        if (comboTimerCoroutine != null)
+        {
+            StopCoroutine(comboTimerCoroutine);
+            comboTimerCoroutine = null;
+        }
+        UpdateCombo(comboCount, comboMultiplier);
+        if (timerCoroutine != null)
+        {
+            StopCoroutine(timerCoroutine);
+            timerCoroutine = null;
+        }
+        timerRemaining = 0;
+        UpdateTimerUI();
+    }
+    public void UpdateCombo(int comboCount, float comboMultiplier)
+    {
+        if (comboText != null)
+        {
+            if (comboCount > 1)
+                comboText.text = $"Combo: x{comboCount} ({comboMultiplier:0.0}x)";
+            else
+                comboText.text = "";
+        }
+    }
+
+    public void StartRoundTimer()
+    {
+        timerText.gameObject.SetActive(true);
+        roundTimer = LevelManager.Instance.GetRoundTimer();
+        timerRemaining = roundTimer;
+
+        if (timerCoroutine != null)
+            StopCoroutine(timerCoroutine);
+        timerCoroutine = StartCoroutine(TimerRoutine());
+    }
+    private IEnumerator TimerRoutine()
+    {
+        while (timerRemaining > 0)
+        {
+            timerRemaining -= Time.deltaTime;
+            UpdateTimerUI();
+            yield return null;
+        }
+        timerRemaining = 0;
+        UpdateTimerUI();
+        HandleTimerEnd();
+    }
+
+    private void UpdateTimerUI()
+    {
+        if (timerText != null)
+            timerText.text = $"Time: {Mathf.CeilToInt(timerRemaining)}";
+    }
+
+    private void HandleTimerEnd()
+    {
+        // Show result panel with failure
+        resultPanel.Show(score, false, LevelManager.Instance.HasNextRound());
+        timerText.gameObject.SetActive(false);
     }
 }

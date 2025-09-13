@@ -55,7 +55,6 @@ public class LevelManager : MonoBehaviour
 
         // Generate grid for this round
         gridManager.GenerateGrid(round);
-
         Debug.Log($"Round {currentRoundIndex + 1} started, Timer: {roundTimer}, Difficulty: {currentDifficulty}, Grid: X{round.gridX}, Y{round.gridY}");
     }
 
@@ -86,5 +85,9 @@ public class LevelManager : MonoBehaviour
     public bool HasNextRound()
     {
         return currentRoundIndex < currentLevel.rounds.Length - 1;
+    }
+    public float GetRoundTimer()
+    {
+        return roundTimer;
     }
 }
