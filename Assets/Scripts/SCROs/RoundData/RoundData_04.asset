@@ -12,10 +12,17 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 60642e031c5151f4ea608b7897bc2998, type: 3}
   m_Name: RoundData_04
   m_EditorClassIdentifier: 
-  gridX: 2
-  gridY: 2
+  gridX: 4
+  gridY: 6
   cardIcons:
   - {fileID: 21300000, guid: b7a15b47c3624094686474889902441a, type: 3}
   - {fileID: 21300000, guid: 1c4c1164db472ab47afc64d617da3ab8, type: 3}
   - {fileID: 21300000, guid: fe11af9365aad1c4794c55f8199361a8, type: 3}
   - {fileID: 21300000, guid: 62dc5bd98c383974a91b8b9c814cc081, type: 3}
+  - {fileID: 21300000, guid: 229372e02691d0245aad430ba2d4834b, type: 3}
+  - {fileID: 21300000, guid: a734cbf0208cba449afd4196706cf869, type: 3}
+  - {fileID: 21300000, guid: ab7f22c7e2db64d4893810d2e0225da0, type: 3}
+  - {fileID: 21300000, guid: f0d45c99fc2d52643a3c462e05e48b25, type: 3}
+  - {fileID: 21300000, guid: 96b852166ae7efa4a8f59e606565eb44, type: 3}
+  roundTimer: 40
+  noDuplicatePairs: 0

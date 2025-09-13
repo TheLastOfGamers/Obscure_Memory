@@ -16,6 +16,7 @@ public class CardController : MonoBehaviour
 
     private bool isAnimating = false;
     private float flipSpeed = 0.15f;
+    private bool cardActive = false;
 
     private Transform[] bounceTargets;
     private Vector3[] originalScales;
@@ -34,15 +35,17 @@ public class CardController : MonoBehaviour
         {
             originalScales[i] = bounceTargets[i].localScale;
         }
-
+        GameManager.Instance.RegisterCard(this);
         ShowBack();
     }
 
     public void OnMouseDown()
     {
-        if (isAnimating || IsMatched) return;
+        if (isAnimating || IsMatched || !cardActive) return;
 
         StartCoroutine(BounceAndFlip());
+        // Notify GameManager
+        OnCardFlipped?.Invoke(this);
     }
 
     private IEnumerator BounceAndFlip()
@@ -62,7 +65,7 @@ public class CardController : MonoBehaviour
         isAnimating = false;
     }
 
-    private IEnumerator FlipCard()
+    public IEnumerator FlipCard()
     {
         // Animate rotation Y from 0 → 90
         for (float t = 0; t < flipSpeed; t += Time.deltaTime)
@@ -87,9 +90,6 @@ public class CardController : MonoBehaviour
         }
 
         imageRenderer.transform.rotation = Quaternion.identity;
-
-        // Notify GameManager
-        OnCardFlipped?.Invoke(this);
     }
 
     private IEnumerator ScaleAll(float multiplier, float duration)
@@ -141,5 +141,13 @@ public class CardController : MonoBehaviour
     private void ShowBack()
     {
         imageRenderer.sprite = backSprite;
+    }
+    public Sprite GetFrontSprite()
+    {
+        return frontSprite;
+    }
+    public void SetCardActive(bool active)
+    {
+        cardActive = active;
     }
 }
