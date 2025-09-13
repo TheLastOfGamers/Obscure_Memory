@@ -25,28 +25,27 @@ public class GameManager : MonoBehaviour
 
     private GridManager gridManager;
     private ResultPanel resultPanel;
-    //Combo
-    private TMP_Text comboText;
-    private int comboCount = 0;
-    private float comboMultiplier = 1f;
-    private Coroutine comboTimerCoroutine;
-    //Score
-    private int score = 0;
 
-    //Timer
-    private float roundTimer;
-    private float timerRemaining;
-    private TMP_Text timerText;
+    private Coroutine comboTimerCoroutine;
     private Coroutine timerCoroutine;
 
+    private int score = 0;
+    private int comboCount = 0;
+    private int currentLevelIndex = 0; // Current level index
+    private int bestScore = 0;
+
+    private float roundTimer;
+    private float timerRemaining;
+    private float bestTime = 0f;
+    private float comboMultiplier = 1f;
+
+    private TMP_Text timerText;
     private TMP_Text scoreText;
+    private TMP_Text comboText;
     private TMP_Text bestScoreText;
     private TMP_Text bestTimeText;
     private TMP_Text curRoundText;
 
-    private int bestScore = 0;
-    private float bestTime = 0f;
-    private int currentLevelIndex = 0; // Current level index
     private void Awake()
     {
         if (Instance != null && Instance != this)
@@ -226,23 +225,28 @@ public class GameManager : MonoBehaviour
     public void ResetCards()
     {
         flippedCards.Clear();
+        
         score = 0;
         comboCount = 1;
         comboMultiplier = 1f;
+
         if (comboTimerCoroutine != null)
         {
             StopCoroutine(comboTimerCoroutine);
             comboTimerCoroutine = null;
         }
         UpdateCombo(comboCount, comboMultiplier);
+
         if (timerCoroutine != null)
         {
             StopCoroutine(timerCoroutine);
             timerCoroutine = null;
         }
         timerRemaining = 0;
+
         bestScoreText.text = "";
         bestTimeText.text = "";
+
         UpdateTimerUI();
         UpdateScoreUI();
     }
