@@ -1648,20 +1648,20 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: c55a3b46629466349b53c8ec9244d26c, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  titleText: {fileID: 267309905}
   levelIcon: {fileID: 263778054}
-  levelNameText: {fileID: 319715199}
-  nextBtn: {fileID: 234400427}
-  prevBtn: {fileID: 837599883}
-  selectBtn: {fileID: 1812170381}
-  difficultyContainer: {fileID: 1453048645}
-  difficultyBtnPrefab: {fileID: 7260917807805128058, guid: 53ee6970edeeff946ae75824ad15e957, type: 3}
   questionMarkIcon: {fileID: 21300000, guid: 1f2eaea6840176c499aada3afce35719, type: 3}
-  diffInfoPanel: {fileID: 1347227361}
+  difficultyContainer: {fileID: 1453048645}
+  titleText: {fileID: 267309905}
+  levelNameText: {fileID: 319715199}
   diffInfoTitleText: {fileID: 1772633642}
   diffInfoDescText: {fileID: 1468331678}
+  nextBtn: {fileID: 234400427}
   playBtn: {fileID: 1262168564}
+  prevBtn: {fileID: 837599883}
   backBtn: {fileID: 146983671}
+  selectBtn: {fileID: 1812170381}
+  difficultyBtnPrefab: {fileID: 7260917807805128058, guid: 53ee6970edeeff946ae75824ad15e957, type: 3}
+  diffInfoPanel: {fileID: 1347227361}
   levelSelectionPanel: {fileID: 2059486804}
   mainMenuPanel: {fileID: 476522816}
   resetBtn: {fileID: 6806234}
@@ -3301,18 +3301,6 @@ MonoBehaviour:
           m_IntArgument: 0
           m_FloatArgument: 0
           m_StringArgument: 
-          m_BoolArgument: 0
-        m_CallState: 2
-      - m_Target: {fileID: 1334164950}
-        m_TargetAssemblyTypeName: SoundManager, Assembly-CSharp
-        m_MethodName: PlaySFX
-        m_Mode: 5
-        m_Arguments:
-          m_ObjectArgument: {fileID: 0}
-          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
-          m_IntArgument: 0
-          m_FloatArgument: 0
-          m_StringArgument: ButtonClick
           m_BoolArgument: 0
         m_CallState: 2
 --- !u!114 &1328900083

@@ -7,20 +7,20 @@ using Unity.VisualScripting;
 public class LevelSelectionPanel : MonoBehaviour
 {
     [Header("UI References")]
-    [SerializeField] private TMP_Text titleText;
     [SerializeField] private Image levelIcon;
-    [SerializeField] private TMP_Text levelNameText;
-    [SerializeField] private Button nextBtn;
-    [SerializeField] private Button prevBtn;
-    [SerializeField] private Button selectBtn;
-    [SerializeField] private Transform difficultyContainer;
-    [SerializeField] private GameObject difficultyBtnPrefab;
     [SerializeField] private Sprite questionMarkIcon;
-    [SerializeField] private GameObject diffInfoPanel;
+    [SerializeField] private Transform difficultyContainer;
+    [SerializeField] private TMP_Text titleText;
+    [SerializeField] private TMP_Text levelNameText;
     [SerializeField] private TMP_Text diffInfoTitleText;
     [SerializeField] private TMP_Text diffInfoDescText;
+    [SerializeField] private Button nextBtn;
     [SerializeField] private Button playBtn;
+    [SerializeField] private Button prevBtn;
     [SerializeField] private Button backBtn;
+    [SerializeField] private Button selectBtn;
+    [SerializeField] private GameObject difficultyBtnPrefab;
+    [SerializeField] private GameObject diffInfoPanel;
     [SerializeField] private GameObject levelSelectionPanel;
     [SerializeField] private GameObject mainMenuPanel;
 
