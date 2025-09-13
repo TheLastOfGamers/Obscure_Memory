@@ -20,7 +20,7 @@ public class GameManager : MonoBehaviour
     public LevelData SelectedLevel { get; private set; }
     public Difficulty SelectedDifficulty { get; private set; }
 
-    private List<CardController> flippedCards = new List<CardController>();
+    private Queue<CardController> flippedCards = new Queue<CardController>();
     private int score = 0;
 
     private const string PLAYER_PREF_KEY = "LevelPlayed_"; // + level index
@@ -94,24 +94,24 @@ public class GameManager : MonoBehaviour
         }
 
         if (!flippedCards.Contains(card))
-            flippedCards.Add(card);
+            flippedCards.Enqueue(card);
 
-        if (flippedCards.Count == 2)
+        // Process matches as soon as two cards are flipped
+        if (flippedCards.Count >= 2)
         {
-            StartCoroutine(CheckMatch());
+            var first = flippedCards.Dequeue();
+            var second = flippedCards.Dequeue();
+            StartCoroutine(CheckMatch(first, second));
         }
     }
 
-    private IEnumerator CheckMatch()
+    private IEnumerator CheckMatch(CardController card1, CardController card2)
     {
-        var card1 = flippedCards[0];
-        var card2 = flippedCards[1];
-
         if (card1.GetFrontSprite() == card2.GetFrontSprite())
         {
             card1.MarkMatched();
             card2.MarkMatched();
-            score += 10;
+            score += (int)LevelManager.Instance.ScoreModifier() * 10;
 
             yield return new WaitForSeconds(0.5f);
 
@@ -127,12 +127,15 @@ public class GameManager : MonoBehaviour
             card1.StartCoroutine(card1.FlipCard());
             card2.StartCoroutine(card2.FlipCard());
         }
-
-        flippedCards.Clear();
+        print("Score: " + score);
     }
 
     private void HandleRoundComplete()
     {
         resultPanel.Show(score, true, LevelManager.Instance.HasNextRound());
+    }
+    public void ResetCards()
+    {
+        flippedCards.Clear();
     }
 }

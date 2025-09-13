@@ -80,4 +80,8 @@ public class LevelManager : MonoBehaviour
             default: return 1.0f;
         }
     }
+    public bool HasNextRound()
+    {
+        return currentRoundIndex < currentLevel.rounds.Length - 1;
+    }
 }
