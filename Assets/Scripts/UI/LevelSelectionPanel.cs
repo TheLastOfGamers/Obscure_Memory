@@ -20,6 +20,9 @@ public class LevelSelectionPanel : MonoBehaviour
     [SerializeField] private TMP_Text diffInfoTitleText;
     [SerializeField] private TMP_Text diffInfoDescText;
     [SerializeField] private Button playBtn;
+    [SerializeField] private Button backBtn;
+    [SerializeField] private GameObject levelSelectionPanel;
+    [SerializeField] private GameObject mainMenuPanel;
 
     private LevelData[] levels;
     private int currentIndex = 0;
@@ -30,16 +33,16 @@ public class LevelSelectionPanel : MonoBehaviour
         titleText.text = "Select Level";
         levels = GameManager.Instance.GetAllLevels();
         ShowLevel(currentIndex);
-
         nextBtn.onClick.AddListener(OnNextClicked);
         prevBtn.onClick.AddListener(OnPrevClicked);
         selectBtn.onClick.AddListener(OnSelectLevelClicked);
     }
 
-     private void ShowLevel(int index)
+    private void ShowLevel(int index)
     {
         if (levels == null || levels.Length == 0) return;
 
+        backBtn.gameObject.SetActive(true);
         if (index < levels.Length)
         {
             var level = levels[index];
@@ -87,9 +90,10 @@ public class LevelSelectionPanel : MonoBehaviour
         nextBtn.gameObject.SetActive(false);
         prevBtn.gameObject.SetActive(false);
         selectBtn.gameObject.SetActive(false);
-
+        
+        backBtn.gameObject.SetActive(true);
         difficultyContainer.gameObject.SetActive(true);
-
+        Debug.Log("Showing difficulty selection");
         // Clear previous buttons
         foreach (Transform child in difficultyContainer)
             Destroy(child.gameObject);
@@ -138,5 +142,29 @@ public class LevelSelectionPanel : MonoBehaviour
     {
         SoundManager.Instance.PlaySFX("ButtonClick");
         GameManager.Instance.SelectDifficulty(diff);
+    }
+
+    public void OnBackButtonClicked()
+    {
+        diffInfoPanel.SetActive(false);
+        if (difficultyContainer.gameObject.activeSelf)
+        {
+            Debug.Log("Back to level selection");
+            // Go back to level selection
+            difficultyContainer.gameObject.SetActive(false);
+            titleText.text = "Select Level";
+            levelIcon.gameObject.SetActive(true);
+            levelNameText.gameObject.SetActive(true);
+            nextBtn.gameObject.SetActive(true);
+            prevBtn.gameObject.SetActive(true);
+            ShowLevel(currentIndex);
+        }
+        else
+        {
+            Debug.Log("Back to main menu");
+            backBtn.gameObject.SetActive(false);
+            mainMenuPanel.SetActive(true);
+            levelSelectionPanel.SetActive(false);
+        }
     }
 }

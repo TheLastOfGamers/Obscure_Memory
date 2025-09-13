@@ -98,7 +98,7 @@ public class ResultPanel : MonoBehaviour
         LevelManager.Instance.LoadRound(); // Just reload the current round
     }
 
-    private void OnMenuClicked()
+    public void OnMenuClicked()
     {
         Hide();
         SceneManager.LoadScene("MainScene");
