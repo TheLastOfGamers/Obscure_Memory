@@ -26,7 +26,7 @@ public class LevelManager : MonoBehaviour
     {
         currentLevel = level;
         currentDifficulty = difficulty;
-        currentRoundIndex = 1;
+        currentRoundIndex = 0;
 
         LoadRound();
     }
@@ -70,6 +70,9 @@ public class LevelManager : MonoBehaviour
     {
         return currentDifficulty != Difficulty.Easy;
     }
+
+    public LevelData SelectedLevel => currentLevel;
+    public int CurrentRoundIndex => currentRoundIndex;
 
     public float ScoreModifier()
     {

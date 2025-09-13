@@ -13,4 +13,5 @@ public class RoundData : ScriptableObject
     [Header("Other Settings")]
     public int roundTimer = 20; // in seconds
     public bool noDuplicatePairs; // if true, each icon can only appear once in the grid
+    public int fullStarScore = 10;
 }

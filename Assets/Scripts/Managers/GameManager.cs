@@ -2,6 +2,7 @@ using UnityEngine;
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using Unity.Mathematics;
 
 public enum Difficulty
 {
@@ -126,6 +127,7 @@ public class GameManager : MonoBehaviour
             yield return new WaitForSeconds(0.7f);
             card1.StartCoroutine(card1.FlipCard());
             card2.StartCoroutine(card2.FlipCard());
+            score -= (int)math.round(LevelManager.Instance.ScoreModifier() * 2) ;
         }
         print("Score: " + score);
     }
@@ -137,5 +139,6 @@ public class GameManager : MonoBehaviour
     public void ResetCards()
     {
         flippedCards.Clear();
+        score = 0;
     }
 }
